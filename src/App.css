@@ -61,8 +61,8 @@ header i {
 }
 
 .display-item button {
-  margin-top: 20px;
-  margin-left: auto;
+  margin-top: 10px;
+  /* margin-left: auto; */
   display: block;
 }
 
@@ -114,7 +114,8 @@ li h3 {
 }
 
 li p {
-  padding: 15px;
+  /* padding: 15px; */
+  margin-left: 10px;
 }
 
 form button {
@@ -124,13 +125,12 @@ form button {
 
 button {
   border-radius: 2px;
-  min-width: 88px;
+
   background-color: #FA6900;
   cursor: pointer;
   border: 0;
-  min-width: 120px;
   color: #fff;
-  font-size: 14px;
+  font-size: 8px;
   box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
   padding: 10px 6px;
 }

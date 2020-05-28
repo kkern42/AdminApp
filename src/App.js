@@ -15,41 +15,51 @@ class App extends Component {
       username: '',
       items: [],
     }
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+
   }
 
 
 
   componentDidMount() {
-    const itemsRef = firebase.database().ref('MrKern');
+    const itemsRef = firebase.database().ref('Fac');
+    //if I make everyhtin childern of fac then I could get a list of all the childern I am pretty sure I think
+    // const itemsRef = firebase.database().ref('school-aa57c');
     itemsRef.on('value', (snapshot) => {
       let items = snapshot.val();
       let newState = [];
       for (let item in items) {
-        newState.push({
-          id: item,
-          student: items[item].student,
-          user: items[item].user
+        const itemsRef = firebase.database().ref('Fac').child(item);
+
+        itemsRef.on('value', (snapshot) => {
+          let kids = snapshot.val();
+          let oneKid = [];
+          for (let kid in kids) {
+            oneKid.push({
+              id: kid,
+              student: kids[kid].student,
+              user: kids[kid].user
+            });
+          }
+          newState.push({ title: item, kids: oneKid });
         });
       }
+      let newnewState = items;
       console.log(newState);
       this.setState({
         items: newState
       });
     });
-
   }
 
-  handleChange(e) {
+  handleChange = (e) => {
     this.setState({
       [e.target.name]: e.target.value
     });
   }
 
-  handleSubmit(e) {
+  handleSubmit = (e) => {
     e.preventDefault();
-    const itemsRef = firebase.database().ref('MrKern');
+    const itemsRef = firebase.database().ref('Fac').child(this.state.username);
     const item = {
       student: this.state.student,
       user: this.state.username
@@ -61,31 +71,45 @@ class App extends Component {
     });
   }
 
+  removeItem = (itemId) => {
+    const itemRef = firebase.database().ref(`/Fac/${itemId}`);
+    itemRef.remove();
+  }
+
   render() {
     return (
       <div className='app'>
         <header>
           <div className='wrapper'>
-            <h1>School Admim</h1>
+            <h1>Thomas Jefferson Elementary School</h1>
           </div>
         </header>
         <div className='container'>
           <section className="add-item">
             <form onSubmit={this.handleSubmit}>
-              <input type="text" name="username" placeholder="What's your name?" onChange={this.handleChange} value={this.state.username} />
-              <input type="text" name="student" placeholder="Add Student" onChange={this.handleChange} value={this.state.student} />
-              <button>Add Person</button>
+              <input type="text" name="username" placeholder="Last name of Teacher" onChange={this.handleChange} value={this.state.username} />
+              <input type="text" name="student" placeholder="Students Name" onChange={this.handleChange} value={this.state.student} />
+              <button style={{ fontSize: "15px" }}>Add Person</button>
             </form>
           </section>
           <section className='display-item'>
             <div className="wrapper">
               <ul>
-                <li >
-                  <h3>Mr. Kern</h3>
-                  {this.state.items.map((item) => {
-                    return (<p>{item.student}</p>);
-                  })}
-                </li>
+                {this.state.items.map((item) => {
+                  return (
+                    <li key={item.id}>
+                      <h3>{item.title}</h3>
+                      {item.kids.map(x => {
+                        return (
+                          <div>
+                            <p>{x.student}
+                              <button onClick={() => this.removeItem(`/${item.title}/${x.id}`)}>Remove</button></p>
+                          </div>
+                        )
+                      })}
+                    </li>
+                  )
+                })}
               </ul>
             </div>
           </section>
@@ -97,16 +121,7 @@ class App extends Component {
 export default App;
 
 
-{/* <ul>
-                {this.state.items.map((item) => {
-                  return (
-                    <li key={item.id}>
-                      <h3>{item.title}</h3>
-                      <p>{item.user}</p>
-                    </li>
-                  )
-                })}
-              </ul> */}
+
 
 // class App extends Component {
 
