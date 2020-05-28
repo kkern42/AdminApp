@@ -11,7 +11,7 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      position: '',
+      student: '',
       username: '',
       items: [],
     }
@@ -22,14 +22,14 @@ class App extends Component {
 
 
   componentDidMount() {
-    const itemsRef = firebase.database().ref('people');
+    const itemsRef = firebase.database().ref('MrKern');
     itemsRef.on('value', (snapshot) => {
       let items = snapshot.val();
       let newState = [];
       for (let item in items) {
         newState.push({
           id: item,
-          title: items[item].title,
+          student: items[item].student,
           user: items[item].user
         });
       }
@@ -49,14 +49,14 @@ class App extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    const itemsRef = firebase.database().ref('people');
+    const itemsRef = firebase.database().ref('MrKern');
     const item = {
-      title: this.state.position,
+      student: this.state.student,
       user: this.state.username
     }
     itemsRef.push(item);
     this.setState({
-      position: '',
+      student: '',
       username: ''
     });
   }
@@ -73,21 +73,19 @@ class App extends Component {
           <section className="add-item">
             <form onSubmit={this.handleSubmit}>
               <input type="text" name="username" placeholder="What's your name?" onChange={this.handleChange} value={this.state.username} />
-              <input type="text" name="position" placeholder="Are you a student or teacher?" onChange={this.handleChange} value={this.state.position} />
+              <input type="text" name="student" placeholder="Add Student" onChange={this.handleChange} value={this.state.student} />
               <button>Add Person</button>
             </form>
           </section>
           <section className='display-item'>
             <div className="wrapper">
               <ul>
-                {this.state.items.map((item) => {
-                  return (
-                    <li key={item.id}>
-                      <h3>{item.title}</h3>
-                      <p>{item.user}</p>
-                    </li>
-                  )
-                })}
+                <li >
+                  <h3>Mr. Kern</h3>
+                  {this.state.items.map((item) => {
+                    return (<p>{item.student}</p>);
+                  })}
+                </li>
               </ul>
             </div>
           </section>
@@ -99,7 +97,16 @@ class App extends Component {
 export default App;
 
 
-
+{/* <ul>
+                {this.state.items.map((item) => {
+                  return (
+                    <li key={item.id}>
+                      <h3>{item.title}</h3>
+                      <p>{item.user}</p>
+                    </li>
+                  )
+                })}
+              </ul> */}
 
 // class App extends Component {
 
