@@ -15,15 +15,10 @@ class App extends Component {
       username: '',
       items: [],
     }
-
   }
-
-
 
   componentDidMount() {
     const itemsRef = firebase.database().ref('Fac');
-    //if I make everyhtin childern of fac then I could get a list of all the childern I am pretty sure I think
-    // const itemsRef = firebase.database().ref('school-aa57c');
     itemsRef.on('value', (snapshot) => {
       let items = snapshot.val();
       let newState = [];
@@ -77,6 +72,9 @@ class App extends Component {
   }
 
   render() {
+
+
+
     return (
       <div className='app'>
         <header>
@@ -118,7 +116,20 @@ class App extends Component {
     );
   }
 }
-export default App;
+
+const firebaseAppAuth = firebase.auth();
+
+const providers = {
+  googleProvider: new firebase.auth.GoogleAuthProvider(),
+
+};
+
+
+
+export default withFirebaseAuth({
+  providers,
+  firebaseAppAuth,
+})(App);
 
 
 
