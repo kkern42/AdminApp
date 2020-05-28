@@ -79,7 +79,7 @@ class App extends Component {
       <div className='app'>
         <header>
           <div className='wrapper'>
-            <h1>Thomas Jefferson Elementary School</h1>
+            <h1> 	&#128214; Thomas Jefferson Elementary School</h1>
           </div>
         </header>
         <div className='container'>
