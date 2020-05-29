@@ -15,7 +15,22 @@ class App extends Component {
       student: '',
       username: '',
       items: [],
+      filter: "All Students",
+      all: false,
     }
+  }
+
+  helpName = (name) => {
+    if (name === "All Students") {
+      return "students"
+    }
+    else if (name == "All Teachers") {
+      return "teachers"
+    }
+    else {
+      return "class"
+    }
+
   }
 
   componentDidMount() {
@@ -35,7 +50,8 @@ class App extends Component {
               user: kids[kid].user
             });
           }
-          newState.push({ title: item, kids: oneKid });
+          let newName = this.helpName(item);
+          newState.push({ title: item, name: newName, kids: oneKid });
         });
       }
       let newnewState = items;
@@ -59,6 +75,7 @@ class App extends Component {
       student: this.state.student,
       user: this.state.username
     }
+
     itemsRef.push(item);
     //will also add student to total student list 
     const allRef = firebase.database().ref('Fac').child('All Students');
@@ -66,6 +83,7 @@ class App extends Component {
       student: this.state.student,
       user: this.state.username
     }
+
     allRef.push(all);
 
     this.setState({
@@ -79,9 +97,26 @@ class App extends Component {
     itemRef.remove();
   }
 
+
+  changeFilter = (setFilter) => {
+    if (setFilter === "all") {
+      this.setState({
+        all: true,
+      });
+    }
+    else {
+      this.setState({
+        filter: setFilter,
+        all: false
+      });
+    }
+
+    return (false);
+  }
+
   render() {
     return (
-      <div className='app'>
+      <div className='app' >
         <header>
           <div className='wrapper'>
             <h1> 	&#128214; Thomas Jefferson Elementary School</h1>
@@ -93,33 +128,37 @@ class App extends Component {
             <form>
               <input type="text" name="username" placeholder="Last name of Teacher" onChange={this.handleChange} value={this.state.username} />
               <input type="text" name="student" placeholder="Students Name" onChange={this.handleChange} value={this.state.student} />
+              {/* had to make onclik an arrow  function or would through looping error */}
+              {/* will refresh when button is pressed if u dont call it button */}
               <button style={{ fontSize: "15px" }} onClick={this.handleSubmit}>Add Student</button>
-              <button style={{ fontSize: "12px", width: "140px", marginRight: "20px" }}>Display Students</button>
-              <button style={{ fontSize: "12px", width: "140px" }}>Display Teachers</button>
-              <button style={{ fontSize: "12px", width: "140px", marginRight: "20px" }}>Display Classes</button>
-              <button style={{ fontSize: "12px", width: "140px" }}>Display All</button>
+              <button style={{ fontSize: "12px", width: "140px", marginRight: "20px" }} type="button" onClick={() => this.changeFilter("students")}>Display Students</button>
+              <button style={{ fontSize: "12px", width: "140px" }} type="button" onClick={() => this.changeFilter("teachers")}>Display Teachers</button>
+              <button style={{ fontSize: "12px", width: "140px", marginRight: "20px" }} type="button" onClick={() => this.changeFilter("class")}>Display Classes</button>
+              <button style={{ fontSize: "12px", width: "140px" }} type="button" onClick={() => this.changeFilter("all")} >Display All</button>
             </form>
           </section>
           <section className='display-item'>
-            <div className="wrapper">
-              <ul>
-                {this.state.items.map((item) => {
-                  return (
-                    <li key={item.id}>
-                      {/* add 's class */}
-                      <h3>{item.title}</h3>
-                      <div style={{ display: "inline-block" }}>
-                        {item.kids.map(x => {
-                          return (
-                            <p >{x.student}
-                              <button onClick={() => this.removeItem(`/${item.title}/${x.id}`)}>Remove</button></p>
-                          )
-                        })}
-                      </div>
-                    </li>
-                  )
-                })}
-              </ul>
+            <div className="wrapper" style={{ display: "flex", flexWrap: "wrap", justifyContent: "left" }}>
+              {this.state.items.map((item) => {
+                return (
+                  <ul>
+                    {
+                      ((this.state.filter === item.name) || this.state.all) && [
+                        <li key={item.id}>
+                          {/* add 's class */}
+                          <h3>{item.title}</h3>
+                          {item.kids.map(x => {
+                            return (
+                              <p >{x.student}
+                                <button onClick={() => this.removeItem(`/${item.title}/${x.id}`)}>Remove</button></p>
+                            )
+                          })}
+                        </li>
+                      ]
+                    }
+                  </ul>
+                )
+              })}
             </div>
           </section>
         </div>
