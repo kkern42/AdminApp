@@ -5,6 +5,7 @@ import 'firebase/auth';
 import firebase from './firebaseConfig';
 import React, { Component } from 'react';
 import './App.css';
+import DropdownButton from 'react-bootstrap/DropdownButton'
 
 
 class App extends Component {
@@ -24,7 +25,6 @@ class App extends Component {
       let newState = [];
       for (let item in items) {
         const itemsRef = firebase.database().ref('Fac').child(item);
-
         itemsRef.on('value', (snapshot) => {
           let kids = snapshot.val();
           let oneKid = [];
@@ -60,6 +60,14 @@ class App extends Component {
       user: this.state.username
     }
     itemsRef.push(item);
+    //will also add student to total student list 
+    const allRef = firebase.database().ref('Fac').child('All Students');
+    const all = {
+      student: this.state.student,
+      user: this.state.username
+    }
+    allRef.push(all);
+
     this.setState({
       student: '',
       username: ''
@@ -72,9 +80,6 @@ class App extends Component {
   }
 
   render() {
-
-
-
     return (
       <div className='app'>
         <header>
@@ -84,10 +89,15 @@ class App extends Component {
         </header>
         <div className='container'>
           <section className="add-item">
-            <form onSubmit={this.handleSubmit}>
+            {/* <form onSubmit={this.handleSubmit}> */}
+            <form>
               <input type="text" name="username" placeholder="Last name of Teacher" onChange={this.handleChange} value={this.state.username} />
               <input type="text" name="student" placeholder="Students Name" onChange={this.handleChange} value={this.state.student} />
-              <button style={{ fontSize: "15px" }}>Add Person</button>
+              <button style={{ fontSize: "15px" }} onClick={this.handleSubmit}>Add Student</button>
+              <button style={{ fontSize: "12px", width: "140px", marginRight: "20px" }}>Display Students</button>
+              <button style={{ fontSize: "12px", width: "140px" }}>Display Teachers</button>
+              <button style={{ fontSize: "12px", width: "140px", marginRight: "20px" }}>Display Classes</button>
+              <button style={{ fontSize: "12px", width: "140px" }}>Display All</button>
             </form>
           </section>
           <section className='display-item'>
@@ -96,15 +106,16 @@ class App extends Component {
                 {this.state.items.map((item) => {
                   return (
                     <li key={item.id}>
+                      {/* add 's class */}
                       <h3>{item.title}</h3>
-                      {item.kids.map(x => {
-                        return (
-                          <div>
-                            <p>{x.student}
+                      <div style={{ display: "inline-block" }}>
+                        {item.kids.map(x => {
+                          return (
+                            <p >{x.student}
                               <button onClick={() => this.removeItem(`/${item.title}/${x.id}`)}>Remove</button></p>
-                          </div>
-                        )
-                      })}
+                          )
+                        })}
+                      </div>
                     </li>
                   )
                 })}
