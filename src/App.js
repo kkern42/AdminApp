@@ -7,6 +7,45 @@ import React, { Component } from 'react';
 import './App.css';
 import DropdownButton from 'react-bootstrap/DropdownButton'
 
+const Display = (props) => {
+  return (
+    <div className='container'>
+      <section className="add-item" style={{ padding: "30px 18px", height: "250px" }}>
+        <form>
+          <h2 style={{ fontWeight: "bold", marginBottom: "15px" }}>Add Students{" & "}Teachers</h2>
+          <input type="text" name="username" placeholder="Name of Group" onChange={props.handleChange} value={props.username} />
+          <input type="text" name="student" placeholder="Students/Teachers Name" onChange={props.handleChange} value={props.student} />
+          <button style={{ fontSize: "15px" }} onClick={props.handleSubmit}>Add Student</button>
+        </form>
+      </section>
+      <section className='display-item'>
+        <div className="wrapper" style={{ display: "flex", flexWrap: "wrap", justifyContent: "left" }}>
+          {props.items.map((item) => {
+            return (
+              <ul>
+                {
+                  ((props.filter === item.name) || props.all) && [
+                    <li key={item.id}>
+                      {/* add 's class */}
+                      <h3>{item.title}</h3>
+                      {item.kids.map(x => {
+                        return (
+                          <p >{x.student}
+                            <button onClick={() => props.removeItem(`/${item.title}/${x.id}`)}>Remove</button></p>
+                        )
+                      })}
+                    </li>
+                  ]
+                }
+              </ul>
+            )
+          })}
+        </div>
+      </section>
+    </div>
+  );
+}
+
 
 class App extends Component {
   constructor() {
@@ -15,8 +54,12 @@ class App extends Component {
       student: '',
       username: '',
       items: [],
-      filter: "All Students",
+      filter: "class",
       all: false,
+      user: '',
+      password: '',
+      admins: [],
+      login: false,
     }
   }
 
@@ -60,6 +103,19 @@ class App extends Component {
         items: newState
       });
     });
+
+    const loginsRef = firebase.database().ref('Login');
+    loginsRef.on('value', (snapshot) => {
+      let logins = snapshot.val();
+      let newlogins = [];
+      for (let item in logins) {
+        newlogins.push({ id: item, user: logins[item].usersname, password: logins[item].password });
+      }
+      console.log(newlogins);
+      this.setState({
+        admins: newlogins,
+      });
+    });
   }
 
   handleChange = (e) => {
@@ -85,19 +141,48 @@ class App extends Component {
     }
 
     allRef.push(all);
-
     this.setState({
       student: '',
       username: ''
     });
   }
 
+  handleLogin = (e) => {
+    e.preventDefault();
+    console.log("here")
+    console.log(this.state.user, this.state.password);
+    console.log(this.state.admins);
+    //this works to create a new admin
+    // const itemsRef = firebase.database().ref('Login');
+    // const item = {
+    //   usersname: this.state.user,
+    //   password: this.state.password,
+    // }
+    // itemsRef.push(item);
+    // this.setState({
+    //   user: '',
+    //   password: ''
+    // });
+    let temp = this.state.admins;
+    for (let admin in temp) {
+      if ((this.state.user === temp[admin].user) && (this.state.password === temp[admin].password)) {
+        this.setState({
+          login: true,
+        });
+      }
+    }
+    // return (
+    //   <div>
+    //     Inccorect User Name or Password
+    //   </div>
+    // );
+
+  }
+
   removeItem = (itemId) => {
     const itemRef = firebase.database().ref(`/Fac/${itemId}`);
     itemRef.remove();
   }
-
-
   changeFilter = (setFilter) => {
     if (setFilter === "all") {
       this.setState({
@@ -110,57 +195,48 @@ class App extends Component {
         all: false
       });
     }
-
     return (false);
   }
-
   render() {
     return (
       <div className='app' >
         <header>
           <div className='wrapper'>
             <h1> 	&#128214; Thomas Jefferson Elementary School</h1>
+            <button style={{ fontWeight: "bold", fontSize: "12px", width: "140px", marginRight: "20px", marginLeft: "50px" }} type="button" onClick={() => this.changeFilter("students")}>Display Students</button>
+            <button style={{ fontWeight: "bold", fontSize: "12px", width: "140px", marginRight: "20px" }} type="button" onClick={() => this.changeFilter("teachers")}>Display Teachers</button>
+            <button style={{ fontWeight: "bold", fontSize: "12px", width: "140px", marginRight: "20px" }} type="button" onClick={() => this.changeFilter("class")}>Display Classes</button>
+            <button style={{ fontWeight: "bold", fontSize: "12px", width: "140px", marginRight: "20px" }} type="button" onClick={() => this.changeFilter("all")} >Display All</button>
           </div>
         </header>
-        <div className='container'>
-          <section className="add-item">
-            {/* <form onSubmit={this.handleSubmit}> */}
-            <form>
-              <input type="text" name="username" placeholder="Last name of Teacher" onChange={this.handleChange} value={this.state.username} />
-              <input type="text" name="student" placeholder="Students Name" onChange={this.handleChange} value={this.state.student} />
-              {/* had to make onclik an arrow  function or would through looping error */}
-              {/* will refresh when button is pressed if u dont call it button */}
-              <button style={{ fontSize: "15px" }} onClick={this.handleSubmit}>Add Student</button>
-              <button style={{ fontSize: "12px", width: "140px", marginRight: "20px" }} type="button" onClick={() => this.changeFilter("students")}>Display Students</button>
-              <button style={{ fontSize: "12px", width: "140px" }} type="button" onClick={() => this.changeFilter("teachers")}>Display Teachers</button>
-              <button style={{ fontSize: "12px", width: "140px", marginRight: "20px" }} type="button" onClick={() => this.changeFilter("class")}>Display Classes</button>
-              <button style={{ fontSize: "12px", width: "140px" }} type="button" onClick={() => this.changeFilter("all")} >Display All</button>
-            </form>
-          </section>
-          <section className='display-item'>
-            <div className="wrapper" style={{ display: "flex", flexWrap: "wrap", justifyContent: "left" }}>
-              {this.state.items.map((item) => {
-                return (
-                  <ul>
-                    {
-                      ((this.state.filter === item.name) || this.state.all) && [
-                        <li key={item.id}>
-                          {/* add 's class */}
-                          <h3>{item.title}</h3>
-                          {item.kids.map(x => {
-                            return (
-                              <p >{x.student}
-                                <button onClick={() => this.removeItem(`/${item.title}/${x.id}`)}>Remove</button></p>
-                            )
-                          })}
-                        </li>
-                      ]
-                    }
-                  </ul>
-                )
-              })}
-            </div>
-          </section>
+        <div>
+          {
+            this.state.login && [
+              <Display
+                username={this.state.username}
+                student={this.state.student}
+                items={this.state.items}
+                filter={this.state.filter} all={this.state.all}
+                handleChange={this.handleChange}
+                handleSubmit={this.handleSubmit}
+                removeItem={this.removeItem}
+              />
+            ]
+          }
+        </div>
+        <div>
+          {
+            !this.state.login && [
+              <section className="add-item" style={{ marginLeft: "39vw", marginTop: "100px", padding: "30px 18px", height: "250px" }}>
+                <form>
+                  <h2 style={{ fontWeight: "bold", marginBottom: "15px" }}>Welcome!</h2>
+                  <input type="text" name="user" placeholder="Username" onChange={this.handleChange} value={this.state.user} />
+                  <input type="text" name="password" placeholder="Password" onChange={this.handleChange} value={this.state.password} />
+                  <button style={{ fontSize: "15px" }} onClick={this.handleLogin}>Login</button>
+                </form>
+              </section>
+            ]
+          }
         </div>
       </div>
     );
