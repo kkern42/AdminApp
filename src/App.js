@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import './App.css';
 import DropdownButton from 'react-bootstrap/DropdownButton'
 import Display from "./DisplayContent.js"
+import Guest from "./Guest.js"
 
 
 class App extends Component {
@@ -22,6 +23,7 @@ class App extends Component {
       password: '',
       admins: [],
       login: false,
+      guest: false,
     }
   }
 
@@ -109,11 +111,17 @@ class App extends Component {
     });
   }
 
+  handleGuest = (e) => {
+    e.preventDefault();
+    this.setState({
+      guest: true,
+    });
+
+
+  }
+
   handleLogin = (e) => {
     e.preventDefault();
-    console.log("here")
-    console.log(this.state.user, this.state.password);
-    console.log(this.state.admins);
     //this works to create a new admin
     // const itemsRef = firebase.database().ref('Login');
     // const item = {
@@ -184,13 +192,29 @@ class App extends Component {
         </div>
         <div>
           {
-            !this.state.login && [
-              <section className="add-item" style={{ marginLeft: "39vw", marginTop: "100px", padding: "30px 18px", height: "250px" }}>
+            this.state.guest && [
+              <Guest
+                username={this.state.username}
+                student={this.state.student}
+                items={this.state.items}
+                filter={this.state.filter} all={this.state.all}
+                handleChange={this.handleChange}
+                handleSubmit={this.handleSubmit}
+                removeItem={this.removeItem}
+              />
+            ]
+          }
+        </div>
+        <div>
+          {
+            (!this.state.login && !this.state.guest) && [
+              <section className="add-item" style={{ marginLeft: "39vw", marginTop: "100px", padding: "30px 18px", height: "275px" }}>
                 <form>
                   <h2 style={{ fontWeight: "bold", marginBottom: "15px" }}>Welcome!</h2>
                   <input type="text" name="user" placeholder="Username" onChange={this.handleChange} value={this.state.user} />
                   <input type="text" name="password" placeholder="Password" onChange={this.handleChange} value={this.state.password} />
-                  <button style={{ fontSize: "15px" }} onClick={this.handleLogin}>Login</button>
+                  <button style={{ fontSize: "15px" }} onClick={this.handleLogin}>Login as Administrator</button>
+                  <button style={{ fontSize: "15px" }} onClick={this.handleGuest}>Continue Guest</button>
                 </form>
               </section>
             ]
