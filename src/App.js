@@ -6,45 +6,7 @@ import firebase from './firebaseConfig';
 import React, { Component } from 'react';
 import './App.css';
 import DropdownButton from 'react-bootstrap/DropdownButton'
-
-const Display = (props) => {
-  return (
-    <div className='container'>
-      <section className="add-item" style={{ padding: "30px 18px", height: "250px" }}>
-        <form>
-          <h2 style={{ fontWeight: "bold", marginBottom: "15px" }}>Add Students{" & "}Teachers</h2>
-          <input type="text" name="username" placeholder="Name of Group" onChange={props.handleChange} value={props.username} />
-          <input type="text" name="student" placeholder="Students/Teachers Name" onChange={props.handleChange} value={props.student} />
-          <button style={{ fontSize: "15px" }} onClick={props.handleSubmit}>Add Student</button>
-        </form>
-      </section>
-      <section className='display-item'>
-        <div className="wrapper" style={{ display: "flex", flexWrap: "wrap", justifyContent: "left" }}>
-          {props.items.map((item) => {
-            return (
-              <ul>
-                {
-                  ((props.filter === item.name) || props.all) && [
-                    <li key={item.id}>
-                      {/* add 's class */}
-                      <h3>{item.title}</h3>
-                      {item.kids.map(x => {
-                        return (
-                          <p >{x.student}
-                            <button onClick={() => props.removeItem(`/${item.title}/${x.id}`)}>Remove</button></p>
-                        )
-                      })}
-                    </li>
-                  ]
-                }
-              </ul>
-            )
-          })}
-        </div>
-      </section>
-    </div>
-  );
-}
+import Display from "./DisplayContent.js"
 
 
 class App extends Component {
@@ -133,14 +95,14 @@ class App extends Component {
     }
 
     itemsRef.push(item);
-    //will also add student to total student list 
-    const allRef = firebase.database().ref('Fac').child('All Students');
-    const all = {
-      student: this.state.student,
-      user: this.state.username
-    }
+    // //will also add student to total student list 
+    // const allRef = firebase.database().ref('Fac').child('All Students');
+    // const all = {
+    //   student: this.state.student,
+    //   user: this.state.username
+    // }
 
-    allRef.push(all);
+    // allRef.push(all);
     this.setState({
       student: '',
       username: ''
@@ -171,18 +133,13 @@ class App extends Component {
         });
       }
     }
-    // return (
-    //   <div>
-    //     Inccorect User Name or Password
-    //   </div>
-    // );
-
   }
 
   removeItem = (itemId) => {
     const itemRef = firebase.database().ref(`/Fac/${itemId}`);
     itemRef.remove();
   }
+
   changeFilter = (setFilter) => {
     if (setFilter === "all") {
       this.setState({
@@ -197,6 +154,7 @@ class App extends Component {
     }
     return (false);
   }
+
   render() {
     return (
       <div className='app' >
@@ -243,19 +201,8 @@ class App extends Component {
   }
 }
 
-const firebaseAppAuth = firebase.auth();
 
-const providers = {
-  googleProvider: new firebase.auth.GoogleAuthProvider(),
-
-};
-
-
-
-export default withFirebaseAuth({
-  providers,
-  firebaseAppAuth,
-})(App);
+export default App;
 
 
 
