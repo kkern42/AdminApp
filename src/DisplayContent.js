@@ -1,11 +1,6 @@
-import withFirebaseAuth from 'react-with-firebase-auth'
-//import * as firebase from 'firebase/app';
-//import * as firebase from 'firebase';
-import 'firebase/auth';
-import firebase from './firebaseConfig';
+
 import React, { Component } from 'react';
 import './App.css';
-import DropdownButton from 'react-bootstrap/DropdownButton'
 
 
 const Display = (props) => {
@@ -32,8 +27,8 @@ const Display = (props) => {
                                             {item.kids.map(x => {
                                                 return (
                                                     <p >{x.student}
-                                                        {/* <div style={{ fontSize: "10px" }}>hey</div> */}
-                                                        <button onClick={() => props.removeItem(`/${item.title}/${x.id}`)}>Remove</button></p>
+                                                        <button onClick={() => props.removeItem(`/${item.title}/${x.id}`)}>Remove</button>
+                                                    </p>
                                                 )
                                             })}
                                         </li>
