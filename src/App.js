@@ -140,6 +140,9 @@ class App extends Component {
           login: true,
         });
       }
+      else {
+        alert("Incorrect password or username")
+      }
     }
   }
 
