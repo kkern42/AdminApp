@@ -96,13 +96,13 @@ class App extends Component {
 
     itemsRef.push(item);
     // //will also add student to total student list 
-    // const allRef = firebase.database().ref('Fac').child('All Students');
-    // const all = {
-    //   student: this.state.student,
-    //   user: this.state.username
-    // }
+    const allRef = firebase.database().ref('Fac').child('All Students');
+    const all = {
+      student: this.state.student,
+      user: this.state.username
+    }
 
-    // allRef.push(all);
+    allRef.push(all);
     this.setState({
       student: '',
       username: ''
