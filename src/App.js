@@ -1,11 +1,10 @@
-import withFirebaseAuth from 'react-with-firebase-auth'
+//import withFirebaseAuth from 'react-with-firebase-auth'
 //import * as firebase from 'firebase/app';
 //import * as firebase from 'firebase';
-import 'firebase/auth';
+//import 'firebase/auth';
 import firebase from './firebaseConfig';
 import React, { Component } from 'react';
 import './App.css';
-import DropdownButton from 'react-bootstrap/DropdownButton'
 import Display from "./DisplayContent.js"
 import Guest from "./Guest.js"
 
@@ -31,7 +30,7 @@ class App extends Component {
     if (name === "All Students") {
       return "students"
     }
-    else if (name == "All Teachers") {
+    else if (name === "All Teachers") {
       return "teachers"
     }
     else {
@@ -61,7 +60,6 @@ class App extends Component {
           newState.push({ title: item, name: newName, kids: oneKid });
         });
       }
-      let newnewState = items;
       console.log(newState);
       this.setState({
         items: newState
@@ -171,7 +169,7 @@ class App extends Component {
       <div className='app' >
         <header>
           <div className='wrapper'>
-            <h1> 	&#128214; Thomas Jefferson Elementary School</h1>
+            <h1> 	<span role="img" aria-label='book'>&#128214;</span> Thomas Jefferson Elementary School</h1>
             <button style={{ fontWeight: "bold", fontSize: "12px", width: "140px", marginRight: "20px", marginLeft: "50px" }} type="button" onClick={() => this.changeFilter("students")}>Display Students</button>
             <button style={{ fontWeight: "bold", fontSize: "12px", width: "140px", marginRight: "20px" }} type="button" onClick={() => this.changeFilter("teachers")}>Display Teachers</button>
             <button style={{ fontWeight: "bold", fontSize: "12px", width: "140px", marginRight: "20px" }} type="button" onClick={() => this.changeFilter("class")}>Display Classes</button>
@@ -211,7 +209,7 @@ class App extends Component {
         <div>
           {
             (!this.state.login && !this.state.guest) && [
-              <section className="add-item" style={{ marginLeft: "39vw", marginTop: "100px", padding: "30px 18px", height: "275px" }}>
+              <section className="add-item" key="what" style={{ marginLeft: "39vw", marginTop: "50px", padding: "30px 18px", height: "275px" }}>
                 <form>
                   <h2 style={{ fontWeight: "bold", marginBottom: "15px" }}>Welcome!</h2>
                   <input type="text" name="user" placeholder="Username" onChange={this.handleChange} value={this.state.user} />

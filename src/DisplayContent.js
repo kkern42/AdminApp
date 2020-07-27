@@ -1,5 +1,5 @@
 
-import React, { Component } from 'react';
+import React from 'react';
 import './App.css';
 
 
@@ -16,17 +16,17 @@ const Display = (props) => {
             </section>
             <section className='display-item'>
                 <div className="wrapper" style={{ display: "flex", flexWrap: "wrap", justifyContent: "left" }}>
-                    {props.items.map((item) => {
+                    {props.items.map((item, index) => {
                         return (
-                            <ul>
+                            <ul key={"first" + index}>
                                 {
                                     ((props.filter === item.name) || props.all) && [
                                         <li key={item.id}>
                                             {/* add 's class */}
                                             <h3>{item.title}</h3>
-                                            {item.kids.map(x => {
+                                            {item.kids.map((x, index) => {
                                                 return (
-                                                    <p >{x.student}
+                                                    <p key={"second" + index}>{x.student}
                                                         <button onClick={() => props.removeItem(`/${item.title}/${x.id}`)}>Remove</button>
                                                     </p>
                                                 )

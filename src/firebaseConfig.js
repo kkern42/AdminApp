@@ -1,4 +1,6 @@
-import firebase from 'firebase'
+import * as firebase from 'firebase/app';
+import 'firebase/database';
+
 const firebaseConfig = {
     apiKey: "AIzaSyBnB8dZjvXD4Ze8-X7LNspLZC6dIgV5Wzw",
     authDomain: "school-aa57c.firebaseapp.com",
